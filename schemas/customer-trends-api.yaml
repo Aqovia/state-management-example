@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Customer Trends API
+  version: 1.0.0
+paths:
+  /trends:
+    get:
+      summary: Get a list of trends
+      description: Returns a list of items commonly purchased together.
+      responses:
+        '200':
+          description: Successful response with the list of trends
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trend'
+
+components:
+  schemas:
+    Trend:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the trend.
+        productSkus:
+          type: array
+          items:
+            type: string
+          description: An array of Stock Keeping Units (SKUs) associated with the trend.
+      required:
+        - id
+        - productSkus

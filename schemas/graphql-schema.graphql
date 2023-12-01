@@ -1,0 +1,20 @@
+schema {
+  query: Query
+}
+
+type Query {
+  recommendedProducts(
+    sku: ID!
+  ): ProductRecommendations
+}
+
+type ProductRecommendations {
+  originalProduct: Product!
+  recommendedProducts: [Product]!
+}
+
+type Product {
+  sku: ID!
+  name: String!
+  price: Float!
+}

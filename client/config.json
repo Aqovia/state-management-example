@@ -1,0 +1,4 @@
+{
+  "productsApiUrl": "http://localhost:4001",
+  "graphqlServerUrl": "http://localhost:4003/graphql"
+}

@@ -1,0 +1,5 @@
+{
+  "productsApiPort": 4001,
+  "customerTrendsApiPort": 4002,
+  "graphqlServerPort": 4003
+}
