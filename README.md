@@ -17,7 +17,7 @@ Included is a `client` application, along with a `server` application (which its
 
 ### Products API
 
-An API offering a list of products available for purchase.
+An API offering a list of products available for purchase, and the ability to update the rating of each product.
 
 ### Customer Trends API
 
@@ -29,8 +29,13 @@ A GraphQL server exposing a single query, which, given a specific product, provi
 
 ## Client
 
-The client is a dummy shopping application, consisting of a `browse-products` component, a `shopping-cart` component and a `recommended-products` component. It allows for browsing products, adding (and removing) them from a shopping cart, and viewing additional recommended products.
-
+The client is a dummy shopping application, consisting of the following main components:
+- `browse-products` - View available products
+- `production-information` - View a product's information, add it to the shopping cart and change its rating
+- `shopping-cart` - View and amend items added to the shopping cart
+- `recommended-products` - View recommended products based on what has been added to the shopping cart
+- `top-rated-products` - View the products that have the highest ratings
+ 
 ### Application State Management
 
 The application contains an example implementation of managing application state, in the form of a customer shopping cart.
@@ -91,7 +96,8 @@ In the `./schemas` directory, the following can be found:
 - Server Querying
 
   - [./client/src/components/browse-products.ts](./client/src/components/browse-products.ts) contains an example of using TanStack Query with a query observer instance, making use of the custom Lit bindings
-  - [./client/src/components/recommended-products.ts](./client/src/components/recommended-products.ts) contains an example of using the TanStack Query client directly, in combination with the GraphQL client
+  - [./client/src/components/recommended-products.ts](./client/src/components/recommended-products.ts) contains an example of using TanStack Query in combination with the GraphQL client
+  - [./client/src/components/product-information.ts](./client/src/components/product-information.ts) contains an example of performing a mutation and invalidating an existing query
 
 - Application State Management
   - [./client/src/state/cart.ts](./client/src/state/cart.ts) contains the shopping cart state class using `mobx`

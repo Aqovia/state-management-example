@@ -17,4 +17,5 @@ type Product {
   sku: ID!
   name: String!
   price: Float!
+  rating: Int!
 }

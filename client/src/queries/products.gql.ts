@@ -7,11 +7,13 @@ export const recommendedProductsQuery = gql`
         sku
         name
         price
+        rating
       }
       recommendedProducts {
         sku
         name
         price
+        rating
       }
     }
   }

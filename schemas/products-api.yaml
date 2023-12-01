@@ -7,6 +7,7 @@ paths:
     get:
       summary: Get a list of products
       description: Returns a list of products with details such as SKU, name, and price.
+      operationId: getProducts
       responses:
         '200':
           description: Successful response with the list of products
@@ -16,6 +17,59 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+  /products/{sku}:
+    get:
+      summary: Get a product
+      description: Returns a product
+      operationId: getProduct
+      parameters:
+        - name: sku
+          in: path
+          description: The Stock Keeping Unit (SKU) of the product.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with a product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+    patch:
+      summary: Rate a product
+      description: Rate a product
+      operationId: rateProduct
+      parameters:
+        - name: sku
+          in: path
+          description: The Stock Keeping Unit (SKU) of the product.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The rating of the product out of 5.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rating:
+                  type: number
+                  format: integer
+                  description: The rating of the product between 1 and 5.
+              required:
+                - rating
+      responses:
+        '204':
+          description: Rating successful
+        '400':
+          description: Bad request
+        '404':
+          description: Product not found
 components:
   schemas:
     Product:
@@ -31,7 +85,12 @@ components:
           type: number
           format: float
           description: The price of the product.
+        rating:
+          type: number
+          format: integer
+          description: The rating of the product out of 5.
       required:
         - sku
         - name
         - price
+        - rating

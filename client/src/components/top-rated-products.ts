@@ -2,10 +2,10 @@ import { html, css, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import { createQuery } from "../../lib/tanstack-query-lit.js";
 import { queryClient } from "../clients/tanstack-query-client.js";
-import "./product-information.js";
+import './product-information.js';
 import { getProductsFn } from "../queries/products.js";
 
-@customElement("browse-products")
+@customElement("top-rated-products")
 export class BrowseProducts extends LitElement {
   static styles = css`
     :host {
@@ -26,16 +26,16 @@ export class BrowseProducts extends LitElement {
 
   render() {
     return html`
-      <h3>Browse Collection</h3>
+      <h3>Top Rated Products</h3>
 
       ${this.productsQuery.isLoading
         ? html`<p>Loading...</p>`
         : html` <div class="products">
-            ${this.productsQuery.data?.map(
-              (product) =>
-                html`<product-information
-                  .product=${product}
-                ></product-information>`
+            ${this.productsQuery.data
+              ?.sort((a, b) => a.rating < b.rating ? 1 : -1)
+              .slice(0, 4)
+              .map((product) =>
+                html`<product-information .product=${product} .canRate=${false}></product-information>`
             )}
           </div>`}
     `;

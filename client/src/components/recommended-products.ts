@@ -1,15 +1,15 @@
 import { html, css, PropertyValueMap } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { cart } from "../state/cart.js";
 import { queryClient } from "../clients/tanstack-query-client.js";
 import {
-  ProductRecommendations,
   RecommendedProductsQuery,
   RecommendedProductsQueryVariables,
 } from "../generated/graphql-types/graphql.js";
 import { graphqlClient } from "../clients/graphql-request-client.js";
-import { recommendedProductsQuery } from "../graphql/queries.js";
+import { recommendedProductsQuery } from "../queries/products.gql.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
+import { createQuery } from "../../lib/tanstack-query-lit.js";
 
 @customElement("recommended-products")
 export class RecommendedProducts extends MobxLitElement {
@@ -25,43 +25,36 @@ export class RecommendedProducts extends MobxLitElement {
   @property({ type: String })
   sku?: string;
 
-  @state()
-  recommendations?: ProductRecommendations;
-
-  fetchRecommendedProducts() {
-    if (!this.sku) {
-      this.recommendations = undefined;
-      return;
-    }
-
-    queryClient
-      .fetchQuery(["recommended-products", this.sku], () =>
-        graphqlClient.request<
-          RecommendedProductsQuery,
-          RecommendedProductsQueryVariables
-        >(recommendedProductsQuery, { sku: this.sku! })
-      )
-      .then((data) => {
-        this.recommendations = data.recommendedProducts!;
-      });
-  }
+  recommendedProductsQuery = createQuery(
+    this,
+    queryClient,
+    ['recommended', { sku: this.sku }],
+    () =>
+      graphqlClient
+        .request<RecommendedProductsQuery, RecommendedProductsQueryVariables>(
+          recommendedProductsQuery,
+          { sku: this.sku! }
+        )
+        .then((data) => data.recommendedProducts)
+  );
 
   protected updated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): void {
-    if (_changedProperties.has("sku")) this.fetchRecommendedProducts();
+    if (_changedProperties.has("sku")) this.recommendedProductsQuery.refetch();
   }
 
   render() {
-    if (!this.recommendations) return html`<p>Loading...</p>`;
+    if (this.recommendedProductsQuery.isLoading) return html`<p>Loading...</p>`;
 
     return html` <h3>Items You Might Like...</h3>
       <p>
-        Because you recently added ${this.recommendations.originalProduct.name}
-        to your basket, we thought you might like:
+        Because you recently added
+        ${this.recommendedProductsQuery.data?.originalProduct.name} to your
+        basket, we thought you might like:
       </p>
       <ul>
-        ${this.recommendations.recommendedProducts.map(
+        ${this.recommendedProductsQuery.data?.recommendedProducts.map(
           (product) => html`<li>
             ${product!.name} - ${product!.price}
             <button @click=${() => cart.addToCart(product!)}>

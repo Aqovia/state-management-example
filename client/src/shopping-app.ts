@@ -3,6 +3,7 @@ import { customElement } from "lit/decorators.js";
 import "./components/browse-products.js";
 import "./components/shopping-cart.js";
 import "./components/recommended-products.js";
+import "./components/top-rated-products.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { cart } from "./state/cart.js";
 
@@ -36,12 +37,16 @@ export class ShoppingApp extends MobxLitElement {
 
         <browse-products></browse-products>
 
-        <shopping-cart></shopping-cart>
+        <div style="display: flex; gap: 20px;">
+          <shopping-cart></shopping-cart>
 
-        ${cart.lastAddedSku &&
-        html`<recommended-products
-          sku=${cart.lastAddedSku}
-        ></recommended-products>`}
+          ${cart.lastAddedSku &&
+          html`<recommended-products style="flex: 1;"
+            sku=${cart.lastAddedSku}
+          ></recommended-products>`}
+        </div>
+
+        <top-rated-products></top-rated-products>
       </main>
     `;
   }
