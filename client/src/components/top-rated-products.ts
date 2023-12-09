@@ -1,9 +1,9 @@
 import { html, css, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import { createQuery } from "../../lib/tanstack-query-lit.js";
-import { queryClient } from "../clients/tanstack-query-client.js";
-import './product-information.js';
+import { useQuery } from "../../lib/tanstack-query-lit.js";
+import "./product-information.js";
 import { getProductsFn } from "../queries/products.js";
+import { Product } from "../generated/products-api/index.js";
 
 @customElement("top-rated-products")
 export class BrowseProducts extends LitElement {
@@ -22,7 +22,13 @@ export class BrowseProducts extends LitElement {
     }
   `;
 
-  productsQuery = createQuery(this, queryClient, ['products'], getProductsFn);
+  productsQuery = useQuery(this, ["products"], getProductsFn);
+
+  get topRatedProducts() {
+    return [...(this.productsQuery?.data as Product[])]
+      ?.sort((a, b) => (a.rating < b.rating ? 1 : -1))
+      .slice(0, 4);
+  }
 
   render() {
     return html`
@@ -31,11 +37,12 @@ export class BrowseProducts extends LitElement {
       ${this.productsQuery.isLoading
         ? html`<p>Loading...</p>`
         : html` <div class="products">
-            ${this.productsQuery.data
-              ?.sort((a, b) => a.rating < b.rating ? 1 : -1)
-              .slice(0, 4)
-              .map((product) =>
-                html`<product-information .product=${product} .canRate=${false}></product-information>`
+            ${this.topRatedProducts.map(
+              (product) =>
+                html`<product-information
+                  .product=${product}
+                  .canRate=${false}
+                ></product-information>`
             )}
           </div>`}
     `;

@@ -17,8 +17,9 @@
   },
   "dependencies": {
     "@adobe/lit-mobx": "^2.2.0",
+    "@lit/context": "^1.1.0",
     "@openapitools/openapi-generator-cli": "^2.7.0",
-    "@tanstack/query-core": "^4.24.10",
+    "@tanstack/query-core": "^5.13.4",
     "graphql": "^16.8.1",
     "graphql-request": "^6.1.0",
     "lit": "^2.8.0",

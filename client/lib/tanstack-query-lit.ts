@@ -1,4 +1,4 @@
-import { ReactiveController, ReactiveControllerHost } from "lit";
+import { ReactiveController, ReactiveElement } from "lit";
 import {
   MutationObserver,
   MutationObserverOptions,
@@ -10,9 +10,29 @@ import {
   QueryObserverOptions,
   QueryObserverResult,
 } from "@tanstack/query-core";
-import { Subscribable } from "@tanstack/query-core/build/lib/subscribable";
+import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
+import { Subscribable } from "@tanstack/query-core/build/legacy/subscribable";
 
-export class ObserverController<R extends object, Label extends PropertyKey>
+const updateProperties = (source: any, target: any) => {
+  Object.keys(source).forEach((key) => {
+    target[key] = source[key];
+  });
+};
+
+export const queryClientContext = createContext<QueryClient>("query-client");
+
+export const provideQueryClient = (
+  host: ReactiveElement,
+  queryClient: QueryClient
+): QueryClient => {
+  new ContextProvider(host, {
+    context: queryClientContext,
+    initialValue: queryClient,
+  });
+  return queryClient;
+};
+
+export class ObserverController<R extends object>
   implements ReactiveController
 {
   private host;
@@ -22,21 +42,21 @@ export class ObserverController<R extends object, Label extends PropertyKey>
   observerResult;
 
   constructor(
-    host: ReactiveControllerHost,
-    observer: Subscribable<(result: R) => void> & { getCurrentResult: () => R }
+    host: ReactiveElement,
+    observer: Subscribable<(result: R) => void> & { getCurrentResult: () => R },
+    observerResult: any
   ) {
-    (this.host = host).addController(this);
     this.observer = observer;
-    this.observerResult = this.observer.getCurrentResult() as any;
+    this.observerResult = observerResult;
+    updateProperties(observer.getCurrentResult(), this.observerResult);
+    (this.host = host).addController(this);
   }
 
   private unsubscribe() {}
 
   hostConnected(): void {
     this.unsubscribe = this.observer.subscribe((result) => {
-      Object.keys(result).forEach((key) => {
-        (this.observerResult as any)[key] = (result as any)[key];
-      });
+      updateProperties(result, this.observerResult);
       this.host.requestUpdate();
     });
   }
@@ -46,15 +66,14 @@ export class ObserverController<R extends object, Label extends PropertyKey>
   }
 }
 
-export const createQuery = <
+export const useQuery = <
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
 >(
-  host: ReactiveControllerHost,
-  client: QueryClient,
+  host: ReactiveElement,
   key: TQueryKey,
   fn: QueryFunction<TQueryFnData, TQueryKey>,
   config?: QueryObserverOptions<
@@ -65,41 +84,56 @@ export const createQuery = <
     TQueryKey
   >
 ): QueryObserverResult<TData, TError> => {
-  const queryObserver = new QueryObserver(client, {
-    queryFn: fn,
-    queryKey: key,
-    ...config,
-  });
-  const controller = new ObserverController(host, queryObserver);
+  const observerResult: any = {};
 
-  return controller.observerResult;
+  new ContextConsumer(host, {
+    context: queryClientContext,
+    subscribe: true,
+    callback: (client) => {
+      const queryObserver = new QueryObserver(client, {
+        queryFn: fn,
+        queryKey: key,
+        ...config,
+      });
+
+      new ObserverController(host, queryObserver, observerResult);
+    },
+  });
+
+  return observerResult;
 };
 
-export const createMutation = <
+export const useMutation = <
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
   TContext extends { client: QueryClient } = { client: QueryClient }
 >(
-  host: ReactiveControllerHost,
-  client: QueryClient,
+  host: ReactiveElement,
   config: MutationObserverOptions<TData, TError, TVariables, TContext>
 ): MutationObserverResult<TData, TError, TVariables, TContext> => {
-  const _onMutate = config.onMutate ?? (() => undefined);
-  config.onMutate = (variables) => {
-    const result = _onMutate(variables);
+  const observerResult: any = {};
 
-    const out =
-      result && "then" in result
-        ? result.then((ctx) => ({ ...(ctx ?? {}), client }))
-        : ({ ...(result ?? {}), client } as any);
+  new ContextConsumer(host, {
+    context: queryClientContext,
+    callback: (client) => {
+      const _onMutate = config.onMutate ?? (() => undefined);
+      config.onMutate = (variables) => {
+        const result = _onMutate(variables);
 
-    return out;
-  };
+        const out =
+          result && "then" in result
+            ? result.then((ctx) => ({ ...(ctx ?? {}), client }))
+            : ({ ...(result ?? {}), client } as any);
 
-  const observer = new MutationObserver(client, config);
+        return out;
+      };
 
-  const controller = new ObserverController(host, observer);
+      const observer = new MutationObserver(client, config);
 
-  return controller.observerResult;
+      new ObserverController(host, observer, observerResult);
+    },
+  });
+
+  return observerResult;
 };

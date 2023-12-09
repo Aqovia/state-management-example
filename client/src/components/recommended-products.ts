@@ -1,7 +1,7 @@
 import { html, css, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { cart } from "../state/cart.js";
-import { queryClient } from "../clients/tanstack-query-client.js";
+import { useQuery } from "../../lib/tanstack-query-lit.js";
 import {
   RecommendedProductsQuery,
   RecommendedProductsQueryVariables,
@@ -9,7 +9,6 @@ import {
 import { graphqlClient } from "../clients/graphql-request-client.js";
 import { recommendedProductsQuery } from "../queries/products.gql.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
-import { createQuery } from "../../lib/tanstack-query-lit.js";
 
 @customElement("recommended-products")
 export class RecommendedProducts extends MobxLitElement {
@@ -25,10 +24,9 @@ export class RecommendedProducts extends MobxLitElement {
   @property({ type: String })
   sku?: string;
 
-  recommendedProductsQuery = createQuery(
+  recommendedProductsQuery = useQuery(
     this,
-    queryClient,
-    ['recommended', { sku: this.sku }],
+    ["recommended", { sku: this.sku }],
     () =>
       graphqlClient
         .request<RecommendedProductsQuery, RecommendedProductsQueryVariables>(

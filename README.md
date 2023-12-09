@@ -8,7 +8,7 @@ Included is a `client` application, along with a `server` application (which its
 
 ## Getting Started
 
-- Clone the repository
+- Clone this repository
 - Run `npm install`
   - This will install all client and server dependencies and perform all code-generation
 - Run `npm start` to start the servers and the front-end application
@@ -84,14 +84,14 @@ In the `./schemas` directory, the following can be found:
 
   - [./client/package.json](./client/package.json) contains the generation code, in the `generate-api` script
   - [./client/src/generated/products-api/](./client/src/generated/products-api/) contains the generated models and API client 
-    - **Note.** The application must be cloned and built for these code-generated files to appear
+    - **Note.** This repository must be cloned and built for these code-generated files to appear
 
 - GraphQL Code Generation
 
   - [./client/package.json](./client/package.json) contains the generation code, in the `generate-graphql` script
   - [./client/graphql-codegen.ts](./client/graphql-codegen.ts) contains the code-generation configuration
   - [./client/src/generated/graphql-types](./client/src/generated/graphql-types) contains the generated types
-    - **Note.** The application must be cloned and built for these code-generated files to appear
+    - **Note.** This repository must be cloned and built for these code-generated files to appear
 
 - Server Querying
 

@@ -1,9 +1,9 @@
-import { html, css } from 'lit';
-import { MobxLitElement } from '@adobe/lit-mobx';
-import { customElement } from 'lit/decorators.js';
-import { cart } from '../state/cart.js';
+import { html, css } from "lit";
+import { MobxLitElement } from "@adobe/lit-mobx";
+import { customElement } from "lit/decorators.js";
+import { cart } from "../state/cart.js";
 
-@customElement('shopping-cart')
+@customElement("shopping-cart")
 export class ShoppingCart extends MobxLitElement {
   static styles = css`
     :host {
@@ -17,13 +17,12 @@ export class ShoppingCart extends MobxLitElement {
   render() {
     return html`
       <h3>Shopping Cart</h3>
-      
-      ${cart.itemsCount()} item(s) in your cart
 
+      ${cart.itemsCount} item(s) in your cart
       ${cart.items?.length
         ? html`
             ${cart.items.map(
-              item =>
+              (item) =>
                 html`<p>
                   <button @click=${() => cart.removeItem(item.sku)}>❌</button>
                   ${item.quantity}x ${item.name}

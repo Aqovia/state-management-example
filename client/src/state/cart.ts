@@ -1,11 +1,11 @@
-import { makeObservable, observable } from "mobx";
+import { autorun, makeAutoObservable } from "mobx";
 import { makePersistable } from "mobx-persist-store";
 import { CartItem } from "../models/CartItem.js";
 import { Product } from "../generated/products-api/index.js";
 
 class CartState {
   constructor() {
-    makeObservable(this);
+    makeAutoObservable(this);
     makePersistable(this, {
       name: "shopping-cart",
       properties: ["items", "lastAddedSku"],
@@ -13,10 +13,8 @@ class CartState {
     });
   }
 
-  @observable
   items: CartItem[] = [];
 
-  @observable
   lastAddedSku?: string = undefined;
 
   addToCart(product: Product) {
@@ -33,22 +31,20 @@ class CartState {
 
   removeItem(sku: string) {
     this.items = this.items.filter((i) => i.sku !== sku);
-    this.reviewCart();
   }
 
   emptyCart() {
     this.items = [];
-    this.reviewCart();
   }
 
-  itemsCount(): number {
+  get itemsCount(): number {
     return this.items.reduce((acc, item) => acc + item.quantity, 0);
-  }
-
-  private reviewCart() {
-    if (!this.items.find(_ => _.sku === this.lastAddedSku))
-      this.lastAddedSku = undefined;
   }
 }
 
 export const cart = new CartState();
+
+autorun(() => {
+  if (!cart.items.find((_) => _.sku === cart.lastAddedSku))
+    cart.lastAddedSku = undefined;
+});

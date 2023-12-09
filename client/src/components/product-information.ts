@@ -4,9 +4,8 @@ import { MobxLitElement } from "@adobe/lit-mobx";
 import { customElement, property } from "lit/decorators.js";
 import { cart } from "../state/cart.js";
 import { Product } from "../generated/products-api/index.js";
-import { queryClient } from "../clients/tanstack-query-client.js";
-import { createMutation } from "../../lib/tanstack-query-lit.js";
 import { productsApiClient } from "../clients/products-api-client.js";
+import { useMutation } from "../../lib/tanstack-query-lit.js";
 
 @customElement("product-information")
 export class ProductInformation extends MobxLitElement {
@@ -30,14 +29,14 @@ export class ProductInformation extends MobxLitElement {
   @property({ type: Boolean })
   canRate = true;
 
-  ratingMutation = createMutation(this, queryClient, {
+  ratingMutation = useMutation(this, {
     mutationFn: (rating: number) =>
       productsApiClient.rateProduct({
         sku: this.product.sku,
         rateProductRequest: { rating },
       }),
     onSuccess: (_data, _variables, context) => {
-      context?.client.invalidateQueries(['products']);
+      context?.client.invalidateQueries({ queryKey: ["products"] });
     },
   });
 

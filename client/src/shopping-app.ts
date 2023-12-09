@@ -6,6 +6,8 @@ import "./components/recommended-products.js";
 import "./components/top-rated-products.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { cart } from "./state/cart.js";
+import { provideQueryClient } from "../lib/tanstack-query-lit.js";
+import { queryClient } from "./clients/tanstack-query-client.js";
 
 @customElement("shopping-app")
 export class ShoppingApp extends MobxLitElement {
@@ -28,25 +30,37 @@ export class ShoppingApp extends MobxLitElement {
     main > * {
       margin-bottom: 20px;
     }
+
+    .flex {
+      display: flex;
+      gap: 20px;
+    }
+
+    .flex-item {
+      flex: 1;
+    }
   `;
+
+  client = provideQueryClient(this, queryClient);
 
   render() {
     return html`
       <main>
         <h2>Shopping App</h2>
 
+        <top-rated-products></top-rated-products>
+
         <browse-products></browse-products>
 
-        <div style="display: flex; gap: 20px;">
+        <div class="flex">
           <shopping-cart></shopping-cart>
 
           ${cart.lastAddedSku &&
-          html`<recommended-products style="flex: 1;"
+          html`<recommended-products
+            class="flex-item"
             sku=${cart.lastAddedSku}
           ></recommended-products>`}
         </div>
-
-        <top-rated-products></top-rated-products>
       </main>
     `;
   }
