@@ -5,7 +5,7 @@ import { customElement, property } from "lit/decorators.js";
 import { cart } from "../state/cart.js";
 import { Product } from "../generated/products-api/index.js";
 import { productsApiClient } from "../clients/products-api-client.js";
-import { useMutation } from "../../lib/tanstack-query-lit.js";
+import { useMutation } from "../../lib/lit-query/useMutation.js";
 
 @customElement("product-information")
 export class ProductInformation extends MobxLitElement {

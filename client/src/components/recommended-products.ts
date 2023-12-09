@@ -1,7 +1,7 @@
 import { html, css, PropertyValueMap } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { cart } from "../state/cart.js";
-import { useQuery } from "../../lib/tanstack-query-lit.js";
+import { useQuery } from "../../lib/lit-query/useQuery.js";
 import {
   RecommendedProductsQuery,
   RecommendedProductsQueryVariables,

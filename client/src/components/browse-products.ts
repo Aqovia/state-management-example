@@ -2,7 +2,7 @@ import { html, css, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import "./product-information.js";
 import { getProductsFn } from "../queries/products.js";
-import { useQuery } from "../../lib/tanstack-query-lit.js";
+import { useQuery } from "../../lib/lit-query/useQuery.js";
 
 @customElement("browse-products")
 export class BrowseProducts extends LitElement {
