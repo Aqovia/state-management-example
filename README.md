@@ -65,7 +65,9 @@ The following are used:
 - `@graphql-codegen/cli`
   - For code-generating types from both a GraphQL schema and queries within the application
 
-At the time of writing, TanStack Query does not have official bindings for Lit. As such, example bindings have been written for this application and can be found in `./client/lib/tanstack-query-lit.ts`.
+At the time of writing, TanStack Query does not have official bindings for Lit. As such, example bindings have been written for this application and can be found on:
+- [GitHub](https://github.com/Aqovia/query/tree/lit-query/packages/lit-query)
+- [npm](https://www.npmjs.com/package/@aqovia/lit-query?activeTab=versions)
 
 ## Schemas
 

@@ -1,6 +1,6 @@
 import { html, css, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import { useQuery } from "../../lib/lit-query/useQuery.js";
+import { useQuery } from "@aqovia/lit-query";
 import "./product-information.js";
 import { getProductsFn } from "../queries/products.js";
 import { Product } from "../generated/products-api/index.js";

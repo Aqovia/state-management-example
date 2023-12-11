@@ -6,7 +6,7 @@ import "./components/recommended-products.js";
 import "./components/top-rated-products.js";
 import { MobxLitElement } from "@adobe/lit-mobx";
 import { cart } from "./state/cart.js";
-import { provideQueryClient } from "../lib/lit-query/provideQueryClient.js";
+import { provideQueryClient } from "@aqovia/lit-query";
 import { queryClient } from "./clients/tanstack-query-client.js";
 
 @customElement("shopping-app")
